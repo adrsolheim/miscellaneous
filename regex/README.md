@@ -1,3 +1,25 @@
+# Regex
+
+* **Backreferences** match the same text as previously matched by a capturing group
+* **Alternation** match a single regular expression out of *several possible* regular expressions
+
+>  #### Branch Reset Groups
+> 
+> `(?|regex)`
+> * `(?|` opens the group
+> * `regex` is any regular expression
+> `(?|(a)|(b)|(c))` matches `a`, `b`, or `c` (three *alternatives*) with only a **single** capture group (`$1`)
+> `(a)|(b)|(c)` matches `a`, `b`, or `c` but there are *three* capture groups
+> `(?|(a)|(b)|(c))\1` matches `aa`, `bb`, or `cc`
+> `(?|abc|(d)(e)(f)|g(h)i)` has three capture groups
+> * `abc` all three capture groups are empty
+> * `def` **$1** holds `a`, **$2** holds `b`, **$3** holds `c`
+> * `ghi` **$1** holds `h`,  the other groups are empty
+> Groups in the branch reset group are numbered continued from the groups before the branch reset group.
+> Groups after the branch reset group are numbered continued from the alternative with the most groups.
+
+
+
 ### Troubleshooting weird behavior
 * break the regular expression down into it's individual components.
 * speak out loud the steps of the expression.
