@@ -1,6 +1,8 @@
 All assembly code is just numbers, even the `mov` instructions (`mov` just points to a fixed unique number.) CPU registers are global variables (`rax`, `rsi`, `eax`) and there are 8-32 of them. On a 64-bit machine the registers can store up to 64-bit numbers. If you need more, you need to use more than one variable.
 The program counter (`pc`, `eip`, etc) is a special registers which tells the CPU which instruction to execute next. 
+
 Assembly is like a sheet of intructions from top to bottom where each has an address (`0x4005db`) and the program counter will point to the next address in the program. Like a programming language, assembly fetches values from memory and puts them into registers (like variables), does something with those variables, and returns the result to memory. Registers are much faster than memory, but space is limited so we need to utilize memory. If some memory addresses keep on being reused the CPU can store them in CPU cache which is slower than registers, but faster than memory.
+
 ```
 0x4005db mov rax, rsi
 0x4045db add rbx, 0x1
