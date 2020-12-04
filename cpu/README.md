@@ -90,11 +90,40 @@ The instruction field may contain any machine instruction: Pentium and P6 instru
 * registers (`ax`, `bp`, `ebx`, `cr0`, etc)
 * constants
 * expressions
-* effective addresses, any operand to an instruction which references memory, e.g.
+* effective addresses (addresses enclosed with `[ ]`), any operand to an instruction which references memory, e.g.
 ```
 wordvar dw	123
 	mov	ax, [wordvar]
 ```
+Involving more than one register
+```
+mov	eax,[ebx*2+ecx+offset]
+```
+
+### Passing arguments
+
+* RAX	System call number
+* RDI	1st argument
+* RSI 	2nd argument
+* RDX 	3rd argument
+* RCX 	4th argument
+* R8 	5th argument
+* R9 	6th argument
+
+### Declaring uninitialized data
+
+```
+buffer: 	resb	64	; 64 bytes
+wordvar:	resw	1	; one word
+realarray: 	resq	10	; array of ten reals
+```
+
+### Defining constants
+```
+message		db	'hello world'
+msglen		equ	$-message	; (this address) - (message address) ?
+```
+
 
 ### Instruction suffix
 Show how large the operands are going to be 
@@ -102,9 +131,11 @@ Show how large the operands are going to be
 movq	rax, rbx	; moving quadword (8-byte value)
 ```
 
-### Pseudo-Instructions (not real machine instructions
-Pseudo-instructions `DB`, `DW`, `DD`, `DQ`, `DT`, `DO`, `DY` and `DZ`
-Uninitialized pseudo-instructions `RESB`, `RESW`, `RESD`, `RESQ`, `REST`, `RESO`, `RESY` and `RESZ`
+### Pseudo-Instructions 
+Used in the instruction field, but are not real machine instructions.
+Pseudo-instructions `DB`, `DW`, `DD`, `DQ`, `DT`, `DO`, `DY` and `DZ`  
+Uninitialized pseudo-instructions `RESB`, `RESW`, `RESD`, `RESQ`, `REST`, `RESO`, `RESY` and `RESZ`  
+`DT`, `DO`, `DY` and `DZ` do not accept integer numeric constants as operands.
 
 ## Stuff
 
