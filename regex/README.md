@@ -1,9 +1,14 @@
 # Regex
 
 * **Backreferences** match the same text as previously matched by a capturing group
+	* There is a difference between a backreference to a capturing group that **matched** *nothing*, and one to a capturing group that did not participate in the match at all.
+		* `(q?)b\1` matches "b". `q?` is optional and matches nothing, causing `(q?)` to match and capture nothing - so `b` matched "b" and `\1` **matched** nothing (emphasizing the word **matched**.)
+		* `(q)?b\1` fails to match "b", because `(q)` fails to match at all so the group never gets to capture anything at all. The engine proceeds to match `b` but eventually fails `\1` because `\1` is not optional.
+* **Forward references** allow you to use backreferences to a group that appear later in the regex (there can be situations in which the regex engine evaluates the backreference after the group has already matched.) 
+	* `(\2two|(one))+` matches "oneonetwo", `\2` fails in the first group, the second group `(one)` matches. Now the first group is repeated and `\2two` matches, in the end matching "oneonetwo".
 * **Alternation** match a single regular expression out of *several possible* regular expressions
 
->  #### Branch Reset Groups
+#### Branch Reset Groups
 > 
 > `(?|regex)`
 > * `(?|` opens the group
