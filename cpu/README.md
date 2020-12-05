@@ -7,16 +7,65 @@
 	* General registers: `eax`, `ecx`, `esi`, `ebx`, `edx`, `edi` 
 	* Reserved registers: `ebp`, `esp`, `eip`
 * Stack - Top of the stack has a lower address (`pop()`) than the base of the stack
-	* Stack frame: A frame on the stack containing all local variables of a function (from `ebp` to `esp`)vvvvvvvvvvvvvvvvvvv
+	* Stack frame: A frame on the stack containing all local variables of a function (from `ebp` to `esp`)
 	* `ebp`: this is pushed onto the stack (inside a stack frame)
 	* `esp`: is given the value of `ebp` and decremented (now above the top of the stack?) to give room for local variables
 	* If any function's return condition gets satisfied, no matter if it has loaded the local variables or not, it will immediately return from stack with it's stack frame (base condition in recursion).
 
 
-## Assenbly
+## Assembly
 
-All assembly code is just numbers, even the `mov` instructions (`mov` just points to a fixed unique number.) We read `mov eax 5` but what's actually there is `B8 05000000` which is what the computer sees (1s and 0s), but it means the same. CPU registers are global variables (`rax`, `rsi`, `eax`) and there are 8-32 of them. On a 64-bit machine the registers can store up to 64-bit numbers. If you need more, you need to use more than one variable.
+All assembly code is just numbers, even the `mov` instructions (`mov` just points to a fixed unique number.) We read `mov eax 5` but what's actually there is `B8 05000000` which is what the computer sees (1s and 0s), but it means the same. There are no data types. **Everything is numbers**, and there are no type conversions compile errors. Essentially, there are just differences in how we treat the numbers - some numbers map to characters and strings, while others are plain number and those are processed differently. We need to know which hexadecimal maps to the ASCII character `A`. So, for any given number **you** need to know if you're treating it as a number, address, character, etc. 
+
+The only thing to meaningfully distinguish is data and addresses, but those are all just numbers aswell. CPU registers are global variables (`rax`, `rsi`, `eax`) and there are 8-32 of them. On a 64-bit machine the registers can store up to 64-bit numbers. If you need more, you need to use more than one variable.
 The program counter (`pc`, `eip`, etc) is a special registers which tells the CPU which instruction to execute next. 
+
+### Registers
+
+Registers are hardware implemented variables. There are a set of transistors in the cpu chip that hold data. These transistors are 64-bit or 32-bit wide. These "variables" will always exist as they are hardcoded into the chip. Performing operations on data are done by loading data into these registers and then performing the given operations.
+
+A lot of registers *share the same transistor space*. `rax`, `eax`, `ah`, and `al` (64-bit, 32-bit, 8-bit and 8-bit respectively) all share the same transistor space. `rax` takes up the whole 64-bit space, while `al` is the lowest 8-bit space. If you move a 64-bit value into `rax` and then subsequently move an 8-bit value into `al`, you will now have effectively changed the value in `rax` aswell. 
+[](images/registers.png)
+
+#### Passing arguments
+When you issue an `int 0x80`, your program is interrupted and the kernel inspects the state of the registers. From `rax`, or `eax`, it grabs the number of the system call you want to execute and from the other registers it grabs additional data.
+
+* RAX	System call number
+* RDI	1st argument
+* RSI 	2nd argument
+* RDX 	3rd argument
+* RCX 	4th argument
+* R8 	5th argument
+* R9 	6th argument
+
+#### Register purposes
+Generally, it does not matter what registers you use for what values when you're not calling a system call (avoid registers such as the stack pointer `rsp` or `esp` though). 
+
+* RAX 
+	* Accumulator register
+	* Used to store results of arithmethic operations
+* RDI
+	* Copying large pieces of data
+	* Destination index
+* RSI
+	* Copying large pieces of data
+	* Source index
+* RDX 
+	* Used in arithmethic operations
+	* Used in I/O operations
+* RCX	
+	* Counter register
+	* Used for incrementing
+	* Used as loop iterator variables
+	* Hardware optimized for slightly faster increments
+* RSP
+	* Stack pointer to top of the stack (lower in memory)
+	* Calculate size of stack with RBP
+	* Stack empty when RSP == RBP (same address)
+* RBP
+	* Stack pointer to bottom of the stack (higher in memory)
+	* Calculate size of stack with RSP
+	* Stack empty when RSP == RBP (same address)
 
 Assembly is like a sheet of intructions from top to bottom where each has an address (`0x4005db`) and the program counter will point to the next address in the program. Like a programming language, assembly fetches values from memory and puts them into registers (like variables), does something with those variables, and returns the result to memory. Registers are much faster than memory, but space is limited so we need to utilize memory. If some memory addresses keep on being reused the CPU can store them in CPU cache which is slower than registers, but faster than memory.
 
@@ -70,7 +119,7 @@ jl 0x000
 `call` pushes the next address on the stack, and `ret` pops it off and keeps going where the `call` instruction was executed. This allows you to jump to a section, execute a bunch of instruction sequentially, and when the program reaches `ret` it will return back (now you have a regular function).
 
 ### .bss vs .data
-`.bss` refers to uninitialized global and static objects
+`.bss` refers to uninitialized global and static objects. Essentially, reserving space in memory for future data.
 ```
 unsigned char var; 		// 8 bit
 static int svar;		// 16 bit
@@ -86,6 +135,18 @@ static unsigned int svar = 2;	// 16 bit
 
 The instruction field may contain any machine instruction: Pentium and P6 instructions, FPU instructions, MMX instructions and even undocumented instructions are all supported. 
 
+### Compile
+Compile `.asm` to machine code `.o`
+```
+nasm -f elf64 -o file.asm
+```
+Turn the `.o` into an executable
+
+```
+ld -m elf64 -o file filo.o
+```
+
+
 ### Instruction operands
 * registers (`ax`, `bp`, `ebx`, `cr0`, etc)
 * constants
@@ -100,15 +161,6 @@ Involving more than one register
 mov	eax,[ebx*2+ecx+offset]
 ```
 
-### Passing arguments
-
-* RAX	System call number
-* RDI	1st argument
-* RSI 	2nd argument
-* RDX 	3rd argument
-* RCX 	4th argument
-* R8 	5th argument
-* R9 	6th argument
 
 ### Declaring uninitialized data
 
