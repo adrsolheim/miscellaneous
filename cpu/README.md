@@ -178,10 +178,27 @@ msglen		equ	$-message	; (this address) - (message address) ?
 
 
 ### Instruction suffix
+
 Show how large the operands are going to be 
 ```
 movq	rax, rbx	; moving quadword (8-byte value)
 ```
+
+**Zero extend**, zero out the unused bits of a register
+```
+mov	bx, 0C3EEh		; (50158) bh 1100 0011 bl 1110 1110
+movzx	dx, bl			; 0000 0000 1110 1110
+movzx	rax, byte ptr [ebx]	; move 1 byte from the address of the base of the stack, 
+				; and set the other 7 bytes to zeros 
+```
+
+**Sign extend**, sign the unused bits of a register
+```
+mov	bx, 0C3EEh	; (50158) bh 1100 0011 bl 1110 1110
+movsx 	ebx, bx		; 1111 1111 1111 1111 1100 0011 bl 1110 1110
+```
+
+
 
 ### Pseudo-Instructions 
 Used in the instruction field, but are not real machine instructions.
@@ -191,7 +208,7 @@ Uninitialized pseudo-instructions `RESB`, `RESW`, `RESD`, `RESQ`, `REST`, `RESO`
 
 ## Stuff
 
-`strcmp` and `cmp` is different. `cmp` (at the processor level) compares to registers `A` and `B` and store the result in some flag. `strcmp` (a "high-level" function) compares two C-style strings. Results/instructions will vary from different platforms and compilers.
+`strcmp` and `cmp` is different. `cmp` (at the processor level) compares two registers `A` and `B` and store the result in some flag. `strcmp` (a "high-level" function) compares two C-style strings. Results/instructions will vary from different platforms and compilers.
 ```
 call 0x400480b0 <strcmp@plt>
 ```
