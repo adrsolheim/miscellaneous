@@ -25,7 +25,7 @@ The program counter (`pc`, `eip`, etc) is a special registers which tells the CP
 Registers are hardware implemented variables. There are a set of transistors in the cpu chip that hold data. These transistors are 64-bit or 32-bit wide. These "variables" will always exist as they are hardcoded into the chip. Performing operations on data are done by loading data into these registers and then performing the given operations.
 
 A lot of registers *share the same transistor space*. `rax`, `eax`, `ah`, and `al` (64-bit, 32-bit, 8-bit and 8-bit respectively) all share the same transistor space. `rax` takes up the whole 64-bit space, while `al` is the lowest 8-bit space. If you move a 64-bit value into `rax` and then subsequently move an 8-bit value into `al`, you will now have effectively changed the value in `rax` aswell. 
-[](images/registers.png)
+![](images/registers.png)
 
 #### Passing arguments
 When you issue an `int 0x80`, your program is interrupted and the kernel inspects the state of the registers. From `rax`, or `eax`, it grabs the number of the system call you want to execute and from the other registers it grabs additional data.
