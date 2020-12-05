@@ -198,6 +198,31 @@ mov	bx, 0C3EEh	; (50158) bh 1100 0011 bl 1110 1110
 movsx 	ebx, bx		; 1111 1111 1111 1111 1100 0011 bl 1110 1110
 ```
 
+### Bitwise operators
+```
+and	eax, edx 	; eax = eax & edx	
+or	eax, edx	; eax = eax | edx
+xor	eax, edx	; eax = eax ^ edx
+test	eax, eax	; checks if eax is 0 but doesn't change eax
+```
+
+### Arithmetic operations
+```
+add	eax, edx 	; eax = eax + edx	
+sub	eax, 15 	; eax = eax - 15	
+```
+Multiplication, where the result may be greater than what fits in the register. The `mul` instruction only operates on `ax`, but the result is stored in `dx:ax`. If the result here is greater than what fits in `ax` (16-bits) the lower 16-bits will be stored in `ax` and the greater 16-bits will be stored in `dx` (the example is 16-bit, but the same methods apply to 32-bit and 64-bit). 
+```
+mov	ax, 15
+mul	bx		; dx:ax = ax * bx
+```
+Division, storing the *quotient* in `ax` and the *remainder* in `dx` (the example is 16-bit, but the same methods apply to 32-bit and 64-bit)
+```
+mov	ax, 15
+			; 	 32-bit / 16-bit
+div	bx		; dx:ax = dx:ax / bx
+```
+
 
 
 ### Pseudo-Instructions 
