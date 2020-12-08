@@ -61,7 +61,7 @@ This means we will be able to fit 2 hexadecimal digit within one byte (70 + 70 <
     }
 ```
 
-
+### Hex to Binary
 
 ```
     // "ABAB1212"
